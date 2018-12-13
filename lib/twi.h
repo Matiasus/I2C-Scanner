@@ -1,5 +1,5 @@
 /** 
- * Two Wire Interface / i2C Communication
+ * Two Wire Interface / I2C Communication
  *
  * Copyright (C) 2018 Marian Hrinko.
  * Written by Marian Hrinko (mato.hrinko@gmail.com)
