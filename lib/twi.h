@@ -26,4 +26,12 @@
     #define TWI
   #endif
 
+  // Slave address
+  #define TWI_SLA = 0x01
+  // SLave Address & Write
+  #define TWI_SLA_W = (TWI_SLA << 1)
+  // SLave Address & Read
+  #define TWI_SLA_R = (TWI_SLA << 1) | 0x01
+
+
 #endif
