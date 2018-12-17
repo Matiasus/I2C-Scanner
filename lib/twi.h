@@ -33,5 +33,13 @@
   // SLave Address & Read
   #define TWI_SLA_R = (TWI_SLA << 1) | 0x01
 
+  // ************************
+  // Master Transmitter Mode
+  // ************************
+  #define TWI_MT_START = 0x08
+  #define TWI_MT_START_ACK = 0x10
+  #define TWI_MT_START_NACK = 0x20
+  #define TWI_MT_DATA_ACK = 0x28
+  #define TWI_MT_DATA_NACK = 0x38
 
 #endif
