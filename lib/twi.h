@@ -37,7 +37,8 @@
   // Master Transmitter Mode
   // ************************
   #define TWI_MT_START = 0x08
-  #define TWI_MT_START_ACK = 0x10
+  #define TWI_MT_START_REPEAT = 0x10
+  #define TWI_MT_START_ACK = 0x18
   #define TWI_MT_START_NACK = 0x20
   #define TWI_MT_DATA_ACK = 0x28
   #define TWI_MT_DATA_NACK = 0x38
