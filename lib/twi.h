@@ -23,8 +23,16 @@
 
   // define register for TWI communication
   #if defined(__AVR_ATMEGA16__) 
-    #define TWI
+    #define TWI_TWAR TWAR
+    #define TWI_TWBR TWBR
+    #define TWI_TWCR TWCR
+    #define TWI_TWSR TWSR
   #endif
+
+  
+
+  // TWI CLK frequency
+  #define TWI_FREQ(BIT_RATE, PRESCALER) ((_FCPU)/(16UL+2*BIT_RATE*4^PRESCALER)-1)
 
   // Slave address
   #define TWI_SLA = 0x01
@@ -43,5 +51,21 @@
   #define TWI_MT_DATA_ACK = 0x28
   #define TWI_MT_DATA_NACK = 0x30
   #define TWI_MT_ARB_LOST = 0x38
+
+  /**
+   * @description TWI init - 
+   *
+   * @param  void
+   * @return void
+   */
+  void TWI_init();
+
+  /**
+   * @description TWI start
+   *
+   * @param  void
+   * @return void
+   */
+  void TWI_start();
 
 #endif
