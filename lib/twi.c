@@ -38,8 +38,25 @@ void TWI_init()
  * @param  void
  * @return void
  */
-void TWI_MT_start()
+void TWI_start()
 {
   // set TWI start conditions
-  TWI_FREQ(3,1);
+  TWI_TWCR = (1 << TWEN)  |  // TWI enable
+             (1 << TWINT) |  // TWI Interrupt Flag - must be cleared by set
+             (1 << TWSTA);   // TWI Start
+}
+
+/**
+ * @description TWI stop
+ *
+ * @param  void
+ * @return void
+ */
+void TWI_stop()
+{
+  // set TWI start conditions
+  TWI_TWCR = (1 << TWEN)  |  // TWI Enable
+             (1 << TWIE) |   // TWI Interrupt Enabled  
+             (1 << TWINT) |  // TWI Interrupt Flag - must be cleared by set
+             (1 << TWSTA);   // TWI Start
 }
