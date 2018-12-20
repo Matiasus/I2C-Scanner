@@ -29,10 +29,8 @@
     #define TWI_TWSR TWSR
   #endif
 
-  
-
   // TWI CLK frequency
-  #define TWI_FREQ(BIT_RATE, PRESCALER) ((_FCPU)/(16UL+2*BIT_RATE*4^PRESCALER)-1)
+  #define TWI_FREQ(BIT_RATE, PRESCALER) { TWI_TWBR = BIT_RATE; TWI_TWSR |= (TWI_TWSR & 0x03) | PRESCALER; }
 
   // Slave address
   #define TWI_SLA = 0x01
