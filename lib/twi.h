@@ -52,7 +52,7 @@
   #define TWI_STOP() { TWI_TWCR = (1 << TWEN) | (1 << TWINT) | (1 << TWSTO); }
 
   // TWI mask status rgister
-  #define TWI_STATUS_CODE() { TWI_TWSR & 0xF8; }
+  #define TWI_STATUS_CODE (TWI_TWSR & 0xF8)
 
   // SLave Address & Write
   #define TWI_SLA_W (SLAVE_ADDRESS) (TWI_TWDR = (SLAVE_ADDRESS << 1))
