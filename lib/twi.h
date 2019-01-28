@@ -44,12 +44,10 @@
   // TWI mask status rgister
   #define TWI_STAT() { TWI_TWSR & 0xF8; }
 
-  // Slave address
-  #define TWI_SLA = 0x01
   // SLave Address & Write
-  #define TWI_SLA_W = (TWI_SLA << 1)
+  #define TWI_SLA_W (SLAVE_ADDRESS) (TWI_TWDR = (SLAVE_ADDRESS << 1))
   // SLave Address & Read
-  #define TWI_SLA_R = (TWI_SLA << 1) | 0x01
+  #define TWI_SLA_R (SLAVE_ADDRESS) (TWI_TWDR = (SLAVE_ADDRESS << 1) |= 0x01;)
 
   // ************************
   // Master Transmitter Mode
