@@ -76,7 +76,13 @@ unsigned char TWI_MT_send_byte(unsigned char address, char data)
   if (TWI_STATUS_CODE != TWI_MT_DATA_ACK) {
    // error
    return 0;
-  }
+  }  
+  // Stop TWI
+  // -------------------------------------------------
+  // send stop sequence
+  TWI_START();
+  // wait for TWINT flag is set
+  TWI_WAIT_TILL_TWINT_IS_SET(); 
   // END
   // -------------------------------------------------
   // success
