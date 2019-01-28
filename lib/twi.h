@@ -22,7 +22,8 @@
   #endif
 
   // define register for TWI communication
-  #if defined(__AVR_ATMEGA16__) 
+  #if defined(__AVR_ATMEGA16__)
+    #define TWI_TWAR TWAR // TWI (Slave) Address Register
     #define TWI_TWBR TWBR // TWI Bit Rate Register
     #define TWI_TWDR TWDR // TWI Data Register
     #define TWI_TWCR TWCR // TWI Control Register
@@ -56,7 +57,7 @@
   #define TWI_MT_ARB_LOST = 0x38
 
   /**
-   * @description TWI init - 
+   * @description TWI init - initialise communication
    *
    * @param  void
    * @return void
