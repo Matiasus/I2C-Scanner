@@ -38,6 +38,9 @@
   //   1     1    -    64
   #define TWI_FREQ(BIT_RATE, PRESCALER) { TWI_TWBR = BIT_RATE; TWI_TWSR |= (TWI_TWSR & 0x03) | PRESCALER; }
 
+  // TWI test if TWINT Flag is ste
+  #define TWI_TWINT_SET() { while (!(TWI_TWCR & (1 << TWINT))); }
+
   // TWI mask status rgister
   #define TWI_STAT() { TWI_TWSR & 0xF8; }
 
