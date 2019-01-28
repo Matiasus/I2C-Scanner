@@ -83,7 +83,7 @@ unsigned char TWI_MT_send_address(unsigned char address)
   // send start sequence
   TWI_MT_start();
   // wait for TWINT flag is set
-  TWI_TWINT_SET();
+  TWI_TWINT_IS_SET();
   // start condition has not been transmitted
   if (TWI_STAT != TWI_MT_START) {
    // error
@@ -95,7 +95,6 @@ unsigned char TWI_MT_send_address(unsigned char address)
   // set TWI conditions
   TWI_TWCR = (1 << TWEN)  |  // TWI enable
              (1 << TWINT);   // TWI Interrupt Flag - must be cleared by set
-
   // success
   return 1;
 }
