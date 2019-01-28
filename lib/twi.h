@@ -34,8 +34,8 @@
   // TWPS1 TWPS0  - PRESCALER
   //   0     0    -     1
   //   0     1    -     4
-  //   1     0    -     16
-  //   1     1    -     64
+  //   1     0    -    16
+  //   1     1    -    64
   #define TWI_FREQ(BIT_RATE, PRESCALER) { TWI_TWBR = BIT_RATE; TWI_TWSR |= (TWI_TWSR & 0x03) | PRESCALER; }
 
   // Slave address
