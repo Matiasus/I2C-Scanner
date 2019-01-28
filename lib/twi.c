@@ -40,6 +40,8 @@ void TWI_init()
  */
 unsigned char TWI_MT_send_byte(unsigned char address, char data)
 {
+  // Start TWI
+  // -------------------------------------------------
   // send start sequence
   TWI_START();
   // wait for TWINT flag is set
@@ -49,6 +51,7 @@ unsigned char TWI_MT_send_byte(unsigned char address, char data)
    // error
    return 0;
   }
+  // Send Address + Write flag
   // -------------------------------------------------
   // fill TWDR register with SLave Address + Write
   TWI_SLA_W(address);
@@ -61,6 +64,7 @@ unsigned char TWI_MT_send_byte(unsigned char address, char data)
    // error
    return 0;
   }
+  // Send DATA
   // -------------------------------------------------
   // fill TWDR register with data
   TWI_SLA_W(data);
@@ -72,8 +76,9 @@ unsigned char TWI_MT_send_byte(unsigned char address, char data)
   if (TWI_STATUS_CODE != TWI_MT_DATA_ACK) {
    // error
    return 0;
-  }  
- 
+  }
+  // END
+  // -------------------------------------------------
   // success
   return 1;
 }
