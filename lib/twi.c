@@ -49,8 +49,8 @@ unsigned char TWI_MT_send_byte(unsigned char address, char data)
    // error
    return 0;
   }
- 
-  // start condition has been transmitted -> fill TWDR register with SLave Address + Write
+  // -------------------------------------------------
+  // fill TWDR register with SLave Address + Write
   TWI_SLA_W(address);
   // send address
   TWI_ALLOW_SEND();
@@ -61,7 +61,7 @@ unsigned char TWI_MT_send_byte(unsigned char address, char data)
    // error
    return 0;
   }
-
+  // -------------------------------------------------
   // fill TWDR register with data
   TWI_SLA_W(data);
   // send address
