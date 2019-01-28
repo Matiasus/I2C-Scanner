@@ -76,14 +76,26 @@ void TWI_stop()
  * @description TWI send - Master Transmitter Mode
  *
  * @param  void
- * @return void
+ * @return unsigned char 
  */
-void TWI_MT_send()
+unsigned char TWI_MT_send_address(unsigned char address)
 {
   // send start sequence
   TWI_MT_start();
   // wait for TWINT flag is set
   TWI_TWINT_SET();
-  //
- 
+  // start condition has not been transmitted
+  if (TWI_STAT != TWI_MT_START) {
+   // error
+   return 0;
+  } 
+  // start condition has been transmitted
+  // fill TWDR register with SLave Address + Write
+  TWI_SLA_W(address);
+  // set TWI conditions
+  TWI_TWCR = (1 << TWEN)  |  // TWI enable
+             (1 << TWINT);   // TWI Interrupt Flag - must be cleared by set
+
+  // success
+  return 1;
 }
