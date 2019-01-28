@@ -33,68 +33,47 @@ void TWI_init()
 }
 
 /**
- * @description TWI start - Master Transmitter Mode
- *
- * @param  void
- * @return void
- */
-void TWI_MT_start()
-{
-  // set TWI start conditions
-  TWI_TWCR = (1 << TWEN)  |  // TWI enable
-             (1 << TWINT) |  // TWI Interrupt Flag - must be cleared by set
-             (1 << TWSTA);   // TWI Start
-}
-
-/**
- * @description TWI repeated start - Master Transmitter Mode
- *
- * @param  void
- * @return void
- */
-void TWI_MT_repeat_start()
-{
-  // repeated start condition is the same as start condition
-  void TWI_MT_start();
-}
-
-/**
- * @description TWI stop - send stop condition
- *
- * @param  void
- * @return void
- */
-void TWI_stop()
-{
-  // set TWI start conditions
-  TWI_TWCR = (1 << TWEN)  |  // TWI Enable
-             (1 << TWINT) |  // TWI Interrupt Flag - must be cleared by set
-             (1 << TWSTO);   // TWI Start
-}
-
-/**
  * @description TWI send - Master Transmitter Mode
  *
  * @param  void
  * @return unsigned char 
  */
-unsigned char TWI_MT_send_address(unsigned char address)
+unsigned char TWI_MT_send_byte(unsigned char address, char data)
 {
   // send start sequence
-  TWI_MT_start();
+  TWI_START();
   // wait for TWINT flag is set
-  TWI_TWINT_IS_SET();
+  TWI_WAIT_TILL_TWINT_IS_SET();
   // start condition has not been transmitted
-  if (TWI_STAT != TWI_MT_START) {
+  if (TWI_STATUS_CODE != TWI_MT_START) {
    // error
    return 0;
-  } 
-  // start condition has been transmitted
-  // fill TWDR register with SLave Address + Write
+  }
+ 
+  // start condition has been transmitted -> fill TWDR register with SLave Address + Write
   TWI_SLA_W(address);
-  // set TWI conditions
-  TWI_TWCR = (1 << TWEN)  |  // TWI enable
-             (1 << TWINT);   // TWI Interrupt Flag - must be cleared by set
+  // send address
+  TWI_ALLOW_SEND();
+  // wait for TWINT flag is set
+  TWI_WAIT_TILL_TWINT_IS_SET();
+  // check if not ACK has been received
+  if (TWI_STATUS_CODE != TWI_MT_SLAW_ACK) {
+   // error
+   return 0;
+  }
+
+  // fill TWDR register with data
+  TWI_SLA_W(data);
+  // send address
+  TWI_ALLOW_SEND();
+  // wait for TWINT flag is set
+  TWI_WAIT_TILL_TWINT_IS_SET();
+  // check if not ACK has been received
+  if (TWI_STATUS_CODE != TWI_MT_DATA_ACK) {
+   // error
+   return 0;
+  }  
+ 
   // success
   return 1;
 }
