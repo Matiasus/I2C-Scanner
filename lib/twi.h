@@ -37,7 +37,6 @@
   //   1     0    -    16
   //   1     1    -    64
   #define TWI_FREQ(BIT_RATE, PRESCALER) { TWI_TWBR = BIT_RATE; TWI_TWSR |= (TWI_TWSR & 0x03) | PRESCALER; }
-
   // TWI test if TWINT Flag is set
   #define TWI_WAIT_TILL_TWINT_IS_SET() { while (!(TWI_TWCR & (1 << TWINT))); }
   // TWI start condition
@@ -54,14 +53,12 @@
   // (1 <<  TWEN) - TWI Enable
   // (1 << TWINT) - TWI Interrupt Flag - must be cleared by set
   #define TWI_ALLOW_SEND() { TWI_TWCR = (1 << TWEN) | (1 << TWINT); }
-
-  // TWI mask status rgister
-  #define TWI_STATUS_CODE (TWI_TWSR & 0xF8)
-
   // SLave Address & Write
   #define TWI_SLA_W (SLAVE_ADDRESS) (TWI_TWDR = (SLAVE_ADDRESS << 1))
   // SLave Address & Read
   #define TWI_SLA_R (SLAVE_ADDRESS) (TWI_TWDR = (SLAVE_ADDRESS << 1) |= 0x01;)
+  // TWI mask status rgister
+  #define TWI_STATUS_CODE (TWI_TWSR & 0xF8)
 
   // ************************
   // Master Transmitter Mode
