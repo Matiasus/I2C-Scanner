@@ -23,13 +23,18 @@
 
   // define register for TWI communication
   #if defined(__AVR_ATMEGA16__) 
-    #define TWI_TWAR TWAR
-    #define TWI_TWBR TWBR
-    #define TWI_TWCR TWCR
-    #define TWI_TWSR TWSR
+    #define TWI_TWBR TWBR // TWI Bit Rate Register
+    #define TWI_TWDR TWDR // TWI Data Register
+    #define TWI_TWCR TWCR // TWI Control Register
+    #define TWI_TWSR TWSR // TWI Status Register
   #endif
 
   // TWI CLK frequency
+  // TWPS1 TWPS0  - PRESCALER
+  //   0     0    -     1
+  //   0     1    -     4
+  //   1     0    -     16
+  //   1     1    -     64
   #define TWI_FREQ(BIT_RATE, PRESCALER) { TWI_TWBR = BIT_RATE; TWI_TWSR |= (TWI_TWSR & 0x03) | PRESCALER; }
 
   // Slave address
