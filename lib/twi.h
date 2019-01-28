@@ -80,19 +80,12 @@
   void TWI_init();
 
   /**
-   * @description TWI start - Master Transmitter Mode
+   * @description TWI send 1 byte - Master Transmitter Mode
    *
-   * @param  void
+   * @param  unsigned char
+   * @param  char
    * @return void
    */
-  void TWI_MT_start();
-
-  /**
-   * @description TWI repeated start - Master Transmitter Mode
-   *
-   * @param  void
-   * @return void
-   */
-  void TWI_MT_repeat_start();
+  void TWI_MT_send_byte(unsigned char, char);
 
 #endif
