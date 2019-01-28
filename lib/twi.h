@@ -50,6 +50,10 @@
   // (1 << TWINT) - TWI Interrupt Flag - must be cleared by set
   // (1 << TWSTO) - TWI Stop
   #define TWI_STOP() { TWI_TWCR = (1 << TWEN) | (1 << TWINT) | (1 << TWSTO); }
+  // TWI allow - for sending address or data 
+  // (1 <<  TWEN) - TWI Enable
+  // (1 << TWINT) - TWI Interrupt Flag - must be cleared by set
+  #define TWI_ALLOW_SEND() { TWI_TWCR = (1 << TWEN) | (1 << TWINT); }
 
   // TWI mask status rgister
   #define TWI_STATUS_CODE (TWI_TWSR & 0xF8)
@@ -64,8 +68,8 @@
   // ************************
   #define TWI_MT_START        = 0x08
   #define TWI_MT_START_REPEAT = 0x10
-  #define TWI_MT_START_ACK    = 0x18
-  #define TWI_MT_START_NACK   = 0x20
+  #define TWI_MT_SLAW_ACK     = 0x18
+  #define TWI_MT_SLAW_NACK    = 0x20
   #define TWI_MT_DATA_ACK     = 0x28
   #define TWI_MT_DATA_NACK    = 0x30
   #define TWI_MT_ARB_LOST     = 0x38
