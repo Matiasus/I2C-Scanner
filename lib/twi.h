@@ -65,11 +65,19 @@
   void TWI_init();
 
   /**
-   * @description TWI start
+   * @description TWI start - Master Transmitter Mode
    *
    * @param  void
    * @return void
    */
-  void TWI_start();
+  void TWI_MT_start();
+
+  /**
+   * @description TWI repeated start - Master Transmitter Mode
+   *
+   * @param  void
+   * @return void
+   */
+  void TWI_MT_repeat_start();
 
 #endif
