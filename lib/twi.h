@@ -38,6 +38,9 @@
   //   1     1    -    64
   #define TWI_FREQ(BIT_RATE, PRESCALER) { TWI_TWBR = BIT_RATE; TWI_TWSR |= (TWI_TWSR & 0x03) | PRESCALER; }
 
+  // TWI mask status rgister
+  #define TWI_STAT() { TWI_TWSR & 0xF8; }
+
   // Slave address
   #define TWI_SLA = 0x01
   // SLave Address & Write
