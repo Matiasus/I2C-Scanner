@@ -71,3 +71,19 @@ void TWI_stop()
              (1 << TWINT) |  // TWI Interrupt Flag - must be cleared by set
              (1 << TWSTO);   // TWI Start
 }
+
+/**
+ * @description TWI send - Master Transmitter Mode
+ *
+ * @param  void
+ * @return void
+ */
+void TWI_MT_send()
+{
+  // send start sequence
+  TWI_MT_start();
+  // wait for TWINT flag is set
+  TWI_TWINT_SET();
+  //
+ 
+}
