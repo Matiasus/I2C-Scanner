@@ -31,11 +31,13 @@
   #endif
 
   // TWI CLK frequency
-  // TWPS1 TWPS0  - PRESCALER
-  //   0     0    -     1
-  //   0     1    -     4
-  //   1     0    -    16
-  //   1     1    -    64
+  //  @param TWBR
+  //  @param Prescaler
+  //    TWPS1 TWPS0  - PRESCALER
+  //      0     0    -     1
+  //      0     1    -     4
+  //      1     0    -    16
+  //      1     1    -    64
   #define TWI_FREQ(BIT_RATE, PRESCALER) { TWI_TWBR = BIT_RATE; TWI_TWSR |= (TWI_TWSR & 0x03) | PRESCALER; }
   // TWI test if TWINT Flag is set
   #define TWI_WAIT_TILL_TWINT_IS_SET() { while (!(TWI_TWCR & (1 << TWINT))); }
@@ -57,10 +59,11 @@
   // (1 <<  TWEN) - TWI Enable
   // (1 << TWINT) - TWI Interrupt Flag - must be cleared by set
   // (1 <<  TWEA) - Set enable acknowledge for transmitter
-  #define TWI_ALLOW_ACK() { TWI_TWCR = (1 << TWEN) | (1 << TWINT) | (1 <<  TWEA); }  
-  // SLave Address & Read / Write
-  // Address is shifted to left, cause 0th bit is for Read / Write
-  #define TWI_SLA_RW (SLAVE_ADDRESS, TYPE) { TWI_TWDR = (SLAVE_ADDRESS << 1); TWI_TWDR |= TYPE; }
+  #define TWI_ALLOW_ACK() { TWI_TWCR = (1 << TWEN) | (1 << TWINT) | (1 <<  TWEA); }
+  // Send addres with read / write operation
+  //  @param SLave Address
+  //  @param Operation - Read / Write
+  #define TWI_SLA_RW (SLAVE_ADDRESS, OPERATION) { TWI_TWDR = (SLAVE_ADDRESS << 1); TWI_TWDR |= OPERATION; }
   // TWI mask status rgister
   #define TWI_STATUS_CODE (TWI_TWSR & 0xF8)
   
@@ -113,8 +116,8 @@
 
   /** @enum Font sizes */
   typedef enum {
-    eRead  = 0x0000 | (TWI_MR_SLAR_ACK << 8);  // status code for success
-    eWrite = 0x0001 | (TWI_MT_SLAW_ACK << 8)   // status code for success
+    eRead  = 0x0000 | (TWI_MR_SLAR_ACK << 8);  // 0x40 - status code for success
+    eWrite = 0x0001 | (TWI_MT_SLAW_ACK << 8)   // 0x18 - status code for success
   } EOperation;
   
   
