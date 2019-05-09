@@ -164,7 +164,7 @@
   /**
    * @desc    TWI receive one byte with acknowledgement
    *
-   * @param   unsigned char
+   * @param   void
    * @return  unsigned char 
    */
   unsigned char TWI_MT_read_ack(void);
@@ -172,7 +172,7 @@
   /**
    * @desc    TWI receive one byte with NOT acknowledgement
    *
-   * @param   unsigned char
+   * @param   void
    * @return  unsigned char 
    */
   unsigned char TWI_MT_read_nack(void);
