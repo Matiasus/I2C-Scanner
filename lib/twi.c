@@ -18,27 +18,36 @@
 #include "twi.h"
 
 /**
- * @description TWI init - initialize frequency
+ * @desc    TWI init - initialize frequency
  *
- * @param  void
- * @return void
+ * @param   void
+ * @return  void
  */
-void TWI_init()
+void TWI_Init()
 {
-  // set TWI frequency to 400 kHz
-  // fclk = (fcpu)/(16+2*TWBR*4*Prescaler)
-  // @param1 value of TWBR
+  // +++++++++++++++++++++++++++++++++++++++++++++
+  // Calculation fclk:
+  //
+  // fclk = (fcpu)/(16+2*TWBR*4^Prescaler)
+  // --------------------------------------------- 
+  // Calculation TWBR:
+  // 
+  // TWBR = {(fcpu/fclk) - 16 } / (2*4^Prescaler)
+  // +++++++++++++++++++++++++++++++++++++++++++++
+  // @param1 value of TWBR, 
+  //    fclk = 400 kHz; TWBR = 3
+  //    fclk = 100 kHz; TWBR = 20
   // @param2 value of Prescaler
   TWI_FREQ(3,1);
 }
 
 /**
- * @description TWI send - Master Transmitter Mode
+ * @desc    TWI start
  *
- * @param  void
- * @return unsigned char 
+ * @param   unsigned char
+ * @return  unsigned char 
  */
-unsigned char TWI_MT_send_byte(unsigned char address, char data)
+unsigned char TWI_Start_condition(unsigned char status_code)
 {
   // Start TWI
   // -------------------------------------------------
@@ -47,38 +56,164 @@ unsigned char TWI_MT_send_byte(unsigned char address, char data)
   // wait for TWINT flag is set
   TWI_WAIT_TILL_TWINT_IS_SET();
   // start condition has not been transmitted
-  if (TWI_STATUS_CODE != TWI_MT_START) {
+  if (TWI_STATUS_CODE != status_code) {
    // error
-   return 0;
+   return TWI_STATUS_CODE;
   }
-  // Send Address + Write flag
-  // -------------------------------------------------
-  // fill TWDR register with SLave Address + Write
-  TWI_SLA_W(address);
+  // success
+  return SUCCESS;
+}
+
+/**
+ * @desc    TWI start - Master Mode
+ *
+ * @param   unsigned char - slave address
+ * @param   EOperation - eWrite -> write
+ *                       eRead -> read
+ * @return  unsigned char 
+ */
+unsigned char TWI_Start(unsigned char address, EOperation operation)
+{
+  // start TWI communication
+  // @param Successful status code for start 0x08
+  unsigned char status = TWI_Start_condition(TWI_START);
+  // fill TWDR register with low byte of enum Operation
+  //  read  = 0
+  //  write = 1
+  TWI_SLA_RW(address, (operation & 0xFF));
   // send address
-  TWI_ALLOW_SEND();
+  TWI_ALLOW_NACK();
   // wait for TWINT flag is set
   TWI_WAIT_TILL_TWINT_IS_SET();
-  // check if not ACK has been received
-  if (TWI_STATUS_CODE != TWI_MT_SLAW_ACK) {
+  // check high byte of enum Operation if not ACK has been received
+  //  write TWI_MT_SLAW_ACK
+  //  read  TWI_MR_SLAR_ACK
+  if (TWI_STATUS_CODE != ((operation >> 8) & 0xFF)) {
    // error
-   return 0;
+   return TWI_STATUS_CODE;
   }
+  // success
+  return status;
+}
+
+/**
+ * @desc    TWI Repeated start - Master Transmitter Mode
+ *
+ * @param   EOperation - eWrite -> write
+ *                       eRead -> read  
+ * @return  unsigned char 
+ */
+unsigned char TWI_Repeated_start(unsigned char address, EOperation operation)
+{
+  // start TWI communication
+  // @param Successful status code for repeated start 0x10
+  unsigned char status = TWI_Start_condition(TWI_START_REPEAT);
+  // fill TWDR register with low byte of enum Operation
+  //  read  = 0
+  //  write = 1
+  TWI_SLA_RW(address, (operation & 0xFF));
+  // send address
+  TWI_ALLOW_NACK();
+  // wait for TWINT flag is set
+  TWI_WAIT_TILL_TWINT_IS_SET();
+  // check high byte of enum Operation if not ACK has been received
+  //  read  - TWI_MR_SLAR_ACK 0x40
+  //  write - TWI_MT_SLAW_ACK 0x18
+  if (TWI_STATUS_CODE != ((operation >> 8) & 0xFF)) {
+   // error
+   return TWI_STATUS_CODE;
+  }
+  // success
+  return status;
+}
+
+/**
+ * @desc    TWI stop
+ *
+ * @param   void
+ * @return  void
+ */
+void TWI_Stop(void)
+{
+  // End TWI
+  // -------------------------------------------------
+  // send stop sequence
+  TWI_STOP();
+  // wait for TWINT flag is set
+  TWI_WAIT_TILL_TWINT_IS_SET();
+}
+
+/**
+ * @desc    TWI send one byte - Master Transmitter Mode
+ *
+ * @param   unsigned char
+ * @return  unsigned char 
+ */
+unsigned char TWI_MT_send_byte(unsigned char data)
+{
   // Send DATA
   // -------------------------------------------------
   // fill TWDR register with data
-  TWI_SLA_W(data);
+  TWI_TWDR = data;
   // send address
-  TWI_ALLOW_SEND();
+  TWI_ALLOW_NACK();
   // wait for TWINT flag is set
   TWI_WAIT_TILL_TWINT_IS_SET();
   // check if not ACK has been received
   if (TWI_STATUS_CODE != TWI_MT_DATA_ACK) {
    // error
-   return 0;
+   return TWI_error(TWI_STATUS_CODE);
   }
-  // END
   // -------------------------------------------------
   // success
-  return 1;
+  return SUCCESS;
+}
+
+/**
+ * @desc    TWI receive one byte with acknowledgement
+ *
+ * @param   void
+ * @return  unsigned char 
+ */
+unsigned char TWI_MT_read_ack(void)
+{
+  // read byte with acknowledgement
+  TWI_ALLOW_ACK();
+  // wait for TWINT flag is set
+  TWI_WAIT_TILL_TWINT_IS_SET();
+  // retrun recieved byte
+  return TWDR;
+}
+
+/**
+ * @desc    TWI receive one byte with NOT acknowledgement
+ *
+ * @param   void
+ * @return  unsigned char 
+ */
+unsigned char TWI_MT_read_nack(void)
+{
+  // read byte with NOT acknowledgement
+  TWI_ALLOW_NACK();
+  // wait for TWINT flag is set
+  TWI_WAIT_TILL_TWINT_IS_SET();
+  // retrun recieved byte
+  return TWDR;
+}
+
+/**
+ * @desc    TWI error
+ *
+ * @param   unsigned char -  status code
+ * @return  unsigned char 
+ */
+unsigned char TWI_error(unsigned char status)
+{
+  // if no ACK received after address transmitted in MT mode
+  if (status == TWI_MT_SLAW_NACK) {
+    // send STOP
+    TWI_Stop();
+  }
+  //
+  return 0;
 }

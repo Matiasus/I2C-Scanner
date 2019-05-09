@@ -49,43 +49,149 @@
   // (1 << TWINT) - TWI Interrupt Flag - must be cleared by set
   // (1 << TWSTO) - TWI Stop
   #define TWI_STOP() { TWI_TWCR = (1 << TWEN) | (1 << TWINT) | (1 << TWSTO); }
-  // TWI allow - for sending address or data 
+  // TWI allow - for sending / reading address or data with no acknowledgement
   // (1 <<  TWEN) - TWI Enable
   // (1 << TWINT) - TWI Interrupt Flag - must be cleared by set
-  #define TWI_ALLOW_SEND() { TWI_TWCR = (1 << TWEN) | (1 << TWINT); }
-  // SLave Address & Write
-  #define TWI_SLA_W (SLAVE_ADDRESS) { TWI_TWDR = (SLAVE_ADDRESS << 1) }
-  // SLave Address & Read
-  #define TWI_SLA_R (SLAVE_ADDRESS) { TWI_TWDR = (SLAVE_ADDRESS << 1) |= 0x01; }
+  #define TWI_ALLOW_NACK() { TWI_TWCR = (1 << TWEN) | (1 << TWINT); }
+  // TWI allow - for reading data with acknowledgement
+  // (1 <<  TWEN) - TWI Enable
+  // (1 << TWINT) - TWI Interrupt Flag - must be cleared by set
+  // (1 <<  TWEA) - Set enable acknowledge for transmitter
+  #define TWI_ALLOW_ACK() { TWI_TWCR = (1 << TWEN) | (1 << TWINT) | (1 <<  TWEA); }  
+  // SLave Address & Read / Write
+  // Address is shifted to left, cause 0th bit is for Read / Write
+  #define TWI_SLA_RW (SLAVE_ADDRESS, TYPE) { TWI_TWDR = (SLAVE_ADDRESS << 1) |= TYPE; }
   // TWI mask status rgister
   #define TWI_STATUS_CODE (TWI_TWSR & 0xF8)
+  
+  // success return value
+  #define SUCCESS = 0
 
-  // ************************
+  // ++++++++++++++++++++++++++++++++++++++++++
+  //
+  //        M A S T E R   M O D E
+  //
+  // ++++++++++++++++++++++++++++++++++++++++++
+  
+  // Master Mode - Transmitter / Receiver
+  #define TWI_START           = 0x08  // A START condition has been transmitted
+  #define TWI_START_REPEAT    = 0x10  // A repeated START condition has been transmitted
+  #define TWI_ARBIT_LOST      = 0x38  // Arbitration lost in SLA+W or NOT ACK bit
   // Master Transmitter Mode
-  // ************************
-  #define TWI_MT_START        = 0x08
-  #define TWI_MT_START_REPEAT = 0x10
-  #define TWI_MT_SLAW_ACK     = 0x18
-  #define TWI_MT_SLAW_NACK    = 0x20
-  #define TWI_MT_DATA_ACK     = 0x28
-  #define TWI_MT_DATA_NACK    = 0x30
-  #define TWI_MT_ARB_LOST     = 0x38
+  #define TWI_MT_SLAW_ACK     = 0x18  // SLA+W has been transmitted; ACK has been received
+  #define TWI_MT_SLAW_NACK    = 0x20  // SLA+W has been transmitted; NOT ACK has been received
+  #define TWI_MT_DATA_ACK     = 0x28  // Data byte has been transmitted; ACK has been received
+  #define TWI_MT_DATA_NACK    = 0x30  // Data byte has been transmitted; NOT ACK has been received  
+  // Master Receiver Mode
+  #define TWI_MR_SLAR_ACK     = 0x40  // SLA+R has been transmitted; ACK has been received
+  #define TWI_MR_SLAR_NACK	  = 0x48  // SLA+R has been transmitted; NOT ACK has been received
+  #define TWI_MR_DATA_ACK     = 0x50  // Data byte has been received; ACK has been received
+  #define TWI_MR_DATA_NACK	  = 0x58  // Data byte has been received; NOT ACK has been received
+  
+  // ++++++++++++++++++++++++++++++++++++++++++
+  //
+  //         S L A V E   M O D E
+  //
+  // ++++++++++++++++++++++++++++++++++++++++++  
 
+  // Slave Receiver Mode
+  #define TWI_SR_SLAW_ACK     = 0x60  // Own Slave address has been received; ACK returned
+  #define TWI_SR_ALMOA_ACK    = 0x68  // Arbitration Lost in SLA+R/W as Master; Own Slave address has been received; ACK returned
+  #define TWI_SR_GCALL_ACK    = 0x70  // General call address has been received; ACK returned
+  #define TWI_SR_ALMGA_ACK    = 0x78  // Arbitration lost in SLA+R/W as Master; General call address has been received; ACK returned  
+  #define TWI_SR_OA_DATA_ACK  = 0x80  // Previously addressed with own SLA+W; data has been received; ACK returned
+  #define TWI_SR_OA_DATA_NACK = 0x88  // Previously addressed with own SLA+W; data has been received; NOT ACK returned
+  #define TWI_SR_GC_DATA_ACK  = 0x90  // Previously addressed with general call; data has been received; ACK returned
+  #define TWI_SR_GC_DATA_NACK = 0x98  // Previously addressed with general call; data has been received; NOT ACK returned
+  #define TWI_SR_STOP_RSTART  = 0xA0  // A STOP condition or repeated START condition has been received while still addressed as Slave
+  // Slave Transmitter Mode
+  #define TWI_ST_OA_ACK       = 0xA8  // Own SLA+R has been received; ACK has been returned
+  #define TWI_ST_ALMOA_ACK	  = 0xB0  // Arbitration lost in SLA+R/W as Master; own SLA+R has been received; ACK has been received
+  #define TWI_ST_DATA_ACK     = 0xB8  // Data byte in TWDR has been transmitted; ACK has been received
+  #define TWI_ST_DATA_NACK	  = 0xC0  // Data byte in TWDR has been transmitted; NOT ACK has been received
+  #define TWI_ST_DATA_NACK	  = 0xC8  // Last data byte in TWDR has been transmitted (TWEA = '0'); ACK has been received
+
+  /** @enum Font sizes */
+  typedef enum {
+    eRead  = 0x0000 | (TWI_MR_SLAR_ACK << 8);  // status code for success
+    eWrite = 0x0001 | (TWI_MT_SLAW_ACK << 8)   // status code for success
+  } EOperation;
+  
+  
   /**
-   * @description TWI init - initialise communication
+   * @desc    TWI init - initialise communication
    *
-   * @param  void
-   * @return void
+   * @param   void
+   * @return  void
    */
   void TWI_init();
+  
+  /**
+   * @desc    TWI start
+   *
+   * @param   unsigned char - status code for success
+   * @return  unsigned char 
+   */
+  unsigned char TWI_Start_condition(unsigned char status_code)
 
   /**
-   * @description TWI send 1 byte - Master Transmitter Mode
+   * @desc    TWI start - Master Mode
    *
-   * @param  unsigned char
-   * @param  char
-   * @return void
+   * @param   unsigned char - slave address
+   * @param   EOperation - eWrite -> write
+   *                       eRead -> read 
+   * @return  unsigned char 
    */
-  void TWI_MT_send_byte(unsigned char, char);
+  unsigned char TWI_Start(unsigned char address, EOperation operation);
+
+  /**
+   * @desc    TWI Repeated start - Master Transmitter Mode
+   *
+   * @param   EOperation - eWrite -> write
+   *                       eRead -> read 
+   * @return  unsigned char 
+   */
+  unsigned char TWI_Repeated_start(unsigned char address, EOperation operation);
+
+  /**
+   * @desc    TWI send one byte - Master Transmitter Mode
+   *
+   * @param   unsigned char
+   * @return  unsigned char 
+   */
+  unsigned char TWI_MT_send_byte(unsigned char data);
+
+  /**
+   * @desc    TWI receive one byte with acknowledgement
+   *
+   * @param   void
+   * @return  unsigned char 
+   */
+  unsigned char TWI_MT_read_ack(void);
+
+  /**
+   * @desc    TWI receive one byte with NOT acknowledgement
+   *
+   * @param   void
+   * @return  unsigned char 
+   */
+  unsigned char TWI_MT_read_nack(void);
+
+  
+  /**
+   * @desc    TWI error
+   *
+   * @param   unsigned char - status code
+   * @return  unsigned char
+   */
+  unsigned char TWI_error(unsigned char status);
+  
+    /**
+   * @desc    TWI stop
+   *
+   * @param   void
+   * @return  void
+   */
+  void TWI_Stop(void);
 
 #endif
