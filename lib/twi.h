@@ -60,7 +60,7 @@
   #define TWI_ALLOW_ACK() { TWI_TWCR = (1 << TWEN) | (1 << TWINT) | (1 <<  TWEA); }  
   // SLave Address & Read / Write
   // Address is shifted to left, cause 0th bit is for Read / Write
-  #define TWI_SLA_RW (SLAVE_ADDRESS, TYPE) { TWI_TWDR = (SLAVE_ADDRESS << 1) |= TYPE; }
+  #define TWI_SLA_RW (SLAVE_ADDRESS, TYPE) { TWI_TWDR = (SLAVE_ADDRESS << 1); TWI_TWDR |= TYPE; }
   // TWI mask status rgister
   #define TWI_STATUS_CODE (TWI_TWSR & 0xF8)
   
