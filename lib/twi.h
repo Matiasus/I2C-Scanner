@@ -69,13 +69,14 @@
   
   // success return value
   #define SUCCESS = 0
+  // success return value
+  #define UNSUCCESS = 0xff  
 
   // ++++++++++++++++++++++++++++++++++++++++++
   //
   //        M A S T E R   M O D E
   //
-  // ++++++++++++++++++++++++++++++++++++++++++
-  
+  // ++++++++++++++++++++++++++++++++++++++++++  
   // Master Mode - Transmitter / Receiver
   #define TWI_START           = 0x08  // A START condition has been transmitted
   #define TWI_START_REPEAT    = 0x10  // A repeated START condition has been transmitted
@@ -95,8 +96,7 @@
   //
   //         S L A V E   M O D E
   //
-  // ++++++++++++++++++++++++++++++++++++++++++  
-
+  // ++++++++++++++++++++++++++++++++++++++++++
   // Slave Receiver Mode
   #define TWI_SR_SLAW_ACK     = 0x60  // Own Slave address has been received; ACK returned
   #define TWI_SR_ALMOA_ACK    = 0x68  // Arbitration Lost in SLA+R/W as Master; Own Slave address has been received; ACK returned
@@ -114,11 +114,21 @@
   #define TWI_ST_DATA_NACK	  = 0xC0  // Data byte in TWDR has been transmitted; NOT ACK has been received
   #define TWI_ST_DATA_NACK	  = 0xC8  // Last data byte in TWDR has been transmitted (TWEA = '0'); ACK has been received
 
-  /** @enum Font sizes */
+  /** @enum Type of operation read / write */
   typedef enum {
-    eRead  = 0x0000 | (TWI_MR_SLAR_ACK << 8);  // 0x40 - status code for success
-    eWrite = 0x0001 | (TWI_MT_SLAW_ACK << 8)   // 0x18 - status code for success
+    eREAD  = 0x0001 | (TWI_MR_SLAR_ACK << 8);  // 0x40 - status code for success
+    eWRITE = 0x0000 | (TWI_MT_SLAW_ACK << 8)   // 0x18 - status code for success
   } EOperation;
+  
+  /** @enum Type of transmission operation */
+  typedef enum {
+    eSTART_SLAW     = 0x00;  // 0x40 - status code for success
+    eSTART_SLAR     = 0x01;  // 0x18 - status code for success
+    eREP_START_SLAW = 0x02;
+    eREP_START_SLAR = 0x03;
+    eDATA_WRITE     = 0x04;
+    eDATA_READ      = 0x05
+  } EType;
   
   
   /**
@@ -127,7 +137,7 @@
    * @param   void
    * @return  void
    */
-  void TWI_init();
+  void TWI_Init();
   
   /**
    * @desc    TWI start
@@ -179,7 +189,6 @@
    * @return  unsigned char 
    */
   unsigned char TWI_MT_read_nack(void);
-
   
   /**
    * @desc    TWI error
@@ -189,7 +198,7 @@
    */
   unsigned char TWI_error(unsigned char status);
   
-    /**
+  /**
    * @desc    TWI stop
    *
    * @param   void
