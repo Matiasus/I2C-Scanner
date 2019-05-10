@@ -17,7 +17,7 @@
 #include <avr/io.h>
 #include "twi.h"
 
-#define SLAVE_ADDRESS 0x01
+#define SLAVE_ADDRESS_24C16 0x01
 
 unsigned char array[10] = "test";
 
@@ -35,7 +35,7 @@ unsigned char write()
   TWI_Init();
   // -------------------------------------------------------
   // Start in master transmitter mode - send slave address
-  if (SUCCESS != TWI_Start(SLAVE_ADDRESS, eWrite)) {
+  if (SUCCESS != TWI_Start(eSTART_SLAW, SLAVE_ADDRESS_24C16)) {
     // go to error
     error();
   }
@@ -44,7 +44,7 @@ unsigned char write()
   if (SUCCESS !=TWI_MT_send_byte(0x00)) {
     // go to error
     error();
-  }
+  }  
   // -------------------------------------------------------
   // send content of array into memory
   for (i = 0; i < strlen(array); i++) {
@@ -76,7 +76,7 @@ unsigned char read()
   TWI_Init();
   // -------------------------------------------------------
   // Start in master transmitter mode - send slave address
-  if (SUCCESS != TWI_Start(SLAVE_ADDRESS, eWrite)) {
+  if (SUCCESS != TWI_Start(eSTART_SLAW, SLAVE_ADDRESS_24C16)) {
     // go to error
     error();
   }
@@ -88,7 +88,7 @@ unsigned char read()
   }
     // -------------------------------------------------------  
   // Send address memory location
-  if (SUCCESS !=TWI_Repeated_Start(SLAVE_ADDRESS, eRead)) {
+  if (SUCCESS !=TWI_Start(eREPEATED_SLAR, SLAVE_ADDRESS_24C16)) {
     // go to error
     error();
   }
