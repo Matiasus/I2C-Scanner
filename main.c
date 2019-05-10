@@ -35,7 +35,7 @@ unsigned char write()
   TWI_Init();
   // -------------------------------------------------------
   // Start in master transmitter mode - send slave address
-  if (SUCCESS != TWI_Start(eSTART_SLAW, SLAVE_ADDRESS_24C16)) {
+  if (SUCCESS != TWI_Transmit(eSTART_SLAW, SLAVE_ADDRESS_24C16)) {
     // go to error
     error();
   }
@@ -76,7 +76,7 @@ unsigned char read()
   TWI_Init();
   // -------------------------------------------------------
   // Start in master transmitter mode - send slave address
-  if (SUCCESS != TWI_Start(eSTART_SLAW, SLAVE_ADDRESS_24C16)) {
+  if (SUCCESS != TWI_Transmit(eSTART_SLAW, SLAVE_ADDRESS_24C16)) {
     // go to error
     error();
   }
@@ -88,7 +88,7 @@ unsigned char read()
   }
     // -------------------------------------------------------  
   // Send address memory location
-  if (SUCCESS !=TWI_Start(eREPEATED_SLAR, SLAVE_ADDRESS_24C16)) {
+  if (SUCCESS !=TWI_Transmit(eREPEATED_SLAR, SLAVE_ADDRESS_24C16)) {
     // go to error
     error();
   }
