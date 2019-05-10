@@ -37,8 +37,39 @@ void TWI_Init()
   // @param1 value of TWBR, 
   //    fclk = 400 kHz; TWBR = 3
   //    fclk = 100 kHz; TWBR = 20
-  // @param2 value of Prescaler
+  // @param2 value of Prescaler = 1
   TWI_FREQ(3,1);
+}
+
+/**
+ * @desc    TWI start
+ *
+ * @param   unsigned char
+ * @return  unsigned char 
+ */
+unsigned char TWI_Transmit(EType type, unsigned char slave_address)
+{
+  // sitch type of transmission
+  switch (type) {
+    // Start & Write
+    case eSTART_SLAW:
+      return TWI_Start(slave_address, (eWRITE & 0xFF));
+    // Start & Read
+    case eSTART_SLAR:
+      return TWI_Start(slave_address, (eREAD & 0xFF));
+    // Repeated start & Write 
+    case eREPEATED_SLAW:
+      return TWI_Repeated_start(slave_address, (eWRITE & 0xFF));
+    // Repeated start & Read
+    case eREPEATED_SLAR:
+      return TWI_Repeated_start(slave_address, (eREAD & 0xFF));
+    // not switched
+    default:
+      // unsuccess
+      return UNSUCCESS;
+  }
+  // success
+  return SUCCESS;
 }
 
 /**
@@ -214,6 +245,6 @@ unsigned char TWI_error(unsigned char status)
     // send STOP
     TWI_Stop();
   }
-  //
-  return 0;
+  // return
+  return SUCCESS;
 }
