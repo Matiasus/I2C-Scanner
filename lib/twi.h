@@ -88,9 +88,10 @@
   #define TWI_MT_DATA_NACK    = 0x30  // Data byte has been transmitted; NOT ACK has been received  
   // Master Receiver Mode
   #define TWI_MR_SLAR_ACK     = 0x40  // SLA+R has been transmitted; ACK has been received
-  #define TWI_MR_SLAR_NACK	  = 0x48  // SLA+R has been transmitted; NOT ACK has been received
+  #define TWI_MR_SLAR_NACK    = 0x48  // SLA+R has been transmitted; NOT ACK has been received
   #define TWI_MR_DATA_ACK     = 0x50  // Data byte has been received; ACK has been received
-  #define TWI_MR_DATA_NACK	  = 0x58  // Data byte has been received; NOT ACK has been received
+  #define TWI_MR_DATA_NACK    = 0x58  // Data byte has been received; NOT ACK has been received
+
   
   // ++++++++++++++++++++++++++++++++++++++++++
   //
@@ -109,10 +110,11 @@
   #define TWI_SR_STOP_RSTART  = 0xA0  // A STOP condition or repeated START condition has been received while still addressed as Slave
   // Slave Transmitter Mode
   #define TWI_ST_OA_ACK       = 0xA8  // Own SLA+R has been received; ACK has been returned
-  #define TWI_ST_ALMOA_ACK	  = 0xB0  // Arbitration lost in SLA+R/W as Master; own SLA+R has been received; ACK has been received
+  #define TWI_ST_ALMOA_ACK    = 0xB0  // Arbitration lost in SLA+R/W as Master; own SLA+R has been received; ACK has been received
   #define TWI_ST_DATA_ACK     = 0xB8  // Data byte in TWDR has been transmitted; ACK has been received
-  #define TWI_ST_DATA_NACK	  = 0xC0  // Data byte in TWDR has been transmitted; NOT ACK has been received
-  #define TWI_ST_DATA_NACK	  = 0xC8  // Last data byte in TWDR has been transmitted (TWEA = '0'); ACK has been received
+  #define TWI_ST_DATA_NACK    = 0xC0  // Data byte in TWDR has been transmitted; NOT ACK has been received
+  #define TWI_ST_DATA_NACK    = 0xC8  // Last data byte in TWDR has been transmitted (TWEA = '0'); ACK has been received
+
 
   /** @enum Type of operation read / write */
   typedef enum {
