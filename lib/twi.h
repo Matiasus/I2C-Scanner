@@ -91,6 +91,7 @@
   #define TWI_MR_SLAR_NACK    = 0x48  // SLA+R has been transmitted; NOT ACK has been received
   #define TWI_MR_DATA_ACK     = 0x50  // Data byte has been received; ACK has been received
   #define TWI_MR_DATA_NACK    = 0x58  // Data byte has been received; NOT ACK has been received
+
   
   // ++++++++++++++++++++++++++++++++++++++++++
   //
@@ -113,6 +114,7 @@
   #define TWI_ST_DATA_ACK     = 0xB8  // Data byte in TWDR has been transmitted; ACK has been received
   #define TWI_ST_DATA_NACK    = 0xC0  // Data byte in TWDR has been transmitted; NOT ACK has been received
   #define TWI_ST_DATA_NACK    = 0xC8  // Last data byte in TWDR has been transmitted (TWEA = '0'); ACK has been received
+
 
   /** @enum Type of operation read / write */
   typedef enum {
