@@ -88,9 +88,9 @@
   #define TWI_MT_DATA_NACK    = 0x30  // Data byte has been transmitted; NOT ACK has been received  
   // Master Receiver Mode
   #define TWI_MR_SLAR_ACK     = 0x40  // SLA+R has been transmitted; ACK has been received
-  #define TWI_MR_SLAR_NACK	  = 0x48  // SLA+R has been transmitted; NOT ACK has been received
+  #define TWI_MR_SLAR_NACK    = 0x48  // SLA+R has been transmitted; NOT ACK has been received
   #define TWI_MR_DATA_ACK     = 0x50  // Data byte has been received; ACK has been received
-  #define TWI_MR_DATA_NACK	  = 0x58  // Data byte has been received; NOT ACK has been received
+  #define TWI_MR_DATA_NACK    = 0x58  // Data byte has been received; NOT ACK has been received
   
   // ++++++++++++++++++++++++++++++++++++++++++
   //
