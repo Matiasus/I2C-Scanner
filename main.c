@@ -16,8 +16,6 @@
 #include "lib/st7735.h"
 #include "lib/twi.h"
 
-#define SLA_W 0x3C
-
 /**
  * @desc    Main
  *
