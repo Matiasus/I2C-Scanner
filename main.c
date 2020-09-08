@@ -1,15 +1,15 @@
 /** 
- * ---------------------------------------------------+ 
- * @desc        Communication with OLED Display
- * ---------------------------------------------------+ 
+ * -------------------------------------------------------------+ 
+ * @desc        Simple scanner I2C
+ * -------------------------------------------------------------+ 
  *              Copyright (C) 2020 Marian Hrinko.
  *              Written by Marian Hrinko (mato.hrinko@gmail.com)
  *
  * @author      Marian Hrinko
  * @datum       06.09.2020
  * @file        main.c
- * @tested      AVR Atmega16
- * ---------------------------------------------------
+ * @tested      AVR Atmega16 
+ * -------------------------------------------------------------+ 
  */
  
 // include libraries
