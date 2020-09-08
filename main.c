@@ -1,124 +1,64 @@
 /** 
- * Two Wire Interface / I2C Communication - example
- *
- * Copyright (C) 2018 Marian Hrinko.
- * Written by Marian Hrinko (mato.hrinko@gmail.com)
+ * ---------------------------------------------------+ 
+ * @desc        Communication with OLED Display
+ * ---------------------------------------------------+ 
+ *              Copyright (C) 2020 Marian Hrinko.
+ *              Written by Marian Hrinko (mato.hrinko@gmail.com)
  *
  * @author      Marian Hrinko
- * @datum       12.12.2018
+ * @datum       06.09.2020
  * @file        main.c
- * @tested      AVR Atmega16 / AVR Atmega8
- * @inspiration
+ * @tested      AVR Atmega16
  * ---------------------------------------------------
  */
  
 // include libraries
-#include <stdio.h>
-#include <avr/io.h>
-#include "twi.h"
+#include "lib/st7735.h"
+#include "lib/twi.h"
 
-#define SLAVE_ADDRESS_24C16 0x01
-
-unsigned char array[10] = "test";
+#define SLA_W 0x3C
 
 /**
- * @desc    Write
+ * @desc    Main
  *
  * @param   void
+ *
  * @return  unsigned char
  */
-unsigned char write()
+int main(void)
 {
-  unsigned char i;
-  
+  unsigned char found;
+  char msg[20];
+
+  // DISPLAY ST7735
+  // -------------------------------------------------   
+  St7735Init();
+  // clear screen
+  ClearScreen(BLACK);
+
   // Init TWI
+  // -------------------------------------------------------
   TWI_Init();
-  // -------------------------------------------------------
-  // Start in master transmitter mode - send slave address
-  if (SUCCESS != TWI_Transmit(eSTART_SLAW, SLAVE_ADDRESS_24C16)) {
-    // go to error
-    error();
-  }
-  // -------------------------------------------------------  
-  // Send address memory location
-  if (SUCCESS !=TWI_MT_send_byte(0x00)) {
-    // go to error
-    error();
-  }  
-  // -------------------------------------------------------
-  // send content of array into memory
-  for (i = 0; i < strlen(array); i++) {
-    // send data byte
-    if (SUCCESS !=TWI_MT_send_byte(array[i])) {
-      // go to error
-      error(); 
-    }
-  }
-  // -------------------------------------------------------   
-  // TWI - end communication with slave
-  TWI_Stop();
-  
-  // return value
-  return 0;
-}
 
-/**
- * @desc    Read
- *
- * @param   void
- * @return  unsigned char
- */
-unsigned char read()
-{
-  unsigned char i;
-  
-  // Init TWI
-  TWI_Init();
-  // -------------------------------------------------------
-  // Start in master transmitter mode - send slave address
-  if (SUCCESS != TWI_Transmit(eSTART_SLAW, SLAVE_ADDRESS_24C16)) {
-    // go to error
-    error();
-  }
-  // -------------------------------------------------------  
-  // Send address memory location
-  if (SUCCESS !=TWI_MT_send_byte(0x00)) {
-    // go to error
-    error();
-  }
-    // -------------------------------------------------------  
-  // Send address memory location
-  if (SUCCESS !=TWI_Transmit(eREPEATED_SLAR, SLAVE_ADDRESS_24C16)) {
-    // go to error
-    error();
-  }
-  // -------------------------------------------------------
-  // read content of array into memory
-  for (i = 0; i < strlen(array); i++) {
-    // read data byte
-    content[i] = TWI_MT_read_ack();
-  }
-  // -------------------------------------------------------  
-  // read last data byte
-  TWI_MT_read_nack();
-  // -------------------------------------------------------   
-  // TWI - end communication with slave
-  TWI_Stop();
-  
-  // return value
-  return 0;
-}
+  // set position x, y
+  SetPosition(25, 5);
+  // draw string
+  DrawString("TWI / I2C SCANNER", WHITE, X1);
+  // find device address
+  found = TWI_MT_FindDevice();
+  // set position x, y
+  SetPosition(18, 20);
+  // draw string
+  DrawString("Device found at [", RED, X1);
+  // to string
+  sprintf(msg, "%x", found);
+  // draw string
+  DrawString(msg, WHITE, X1);
+  // draw string
+  DrawString("]", RED, X1);
+  // update screen
+  UpdateScreen();
 
-/**
- * @desc    Error
- *
- * @param   void
- * @return  unsigned char
- */
-unsigned char error()
-{
-  // TWI - end communication with slave
-  TWI_Stop();
-  // return
+  // return value
   return 0;
 }
