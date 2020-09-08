@@ -1,2 +1,4 @@
 # TWI
-I2C Atmega16A - not tested yet ...
+Example of I2C / TWI Scanner
+## Prerequisities
+st7735 library
