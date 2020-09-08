@@ -5,4 +5,4 @@ Display depicts first found device either more devices connected on the same bus
 ## Tested
 Program was tested with Atmega16A.
 ## Prerequisite
-- [st7735 library](https://github.com/Matiasus/ST7735/tree/master/lib)
+- [Library st7735](https://github.com/Matiasus/ST7735)
